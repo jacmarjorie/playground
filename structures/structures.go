@@ -9,7 +9,6 @@ import (
 )
 
 type pushPopStruct interface {
-	elements() []any
 	push(value any)
 	pop() any
 	peek() any
@@ -40,7 +39,8 @@ func evaluate(s pushPopStruct, reader io.Reader) string {
 			s.push(line[5:])
 		}
 	}
-	output = append(output, fmt.Sprintf("%v", s.elements()))
+
+	output = append(output, fmt.Sprintf("%v", s))
 	return strings.Join(output, " ")
 
 }

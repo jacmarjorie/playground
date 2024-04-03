@@ -1,66 +1,82 @@
 package structures
 
 import (
-	"math/rand"
+	"strings"
 	"testing"
-	"time"
 
 	"github.com/google/go-cmp/cmp"
 )
 
-func Test_rotateLeftTillZero(t *testing.T) {
+func Test_queue(t *testing.T) {
+
 	tests := []struct {
-		name string
-		q    *queue
-		want []any
+		name    string
+		dstruct queue
+		input   string
+		want    string
 	}{
 		{
-			name: "Test1 - zero at end",
-			q:    &queue{eles: []any{1, 2, 3, 4, "A", "B", "C", 0}},
-			want: []any{0, 1, 2, 3, 4, "A", "B", "C"},
+			name:    "Test1 - queue",
+			dstruct: queue{},
+			input:   test1,
+			want:    "3 &[20 0 4]",
 		},
 		{
-			name: "Test2 - zero at beginning",
-			q:    &queue{eles: []any{0, 1, 2, 3, 4, "A", "B", "C"}},
-			want: []any{0, 1, 2, 3, 4, "A", "B", "C"},
-		},
-		{
-			name: "Test2 - zero in middle",
-			q:    &queue{eles: []any{1, 2, 3, 4, 0, "A", "B", "C"}},
-			want: []any{0, "A", "B", "C", 1, 2, 3, 4},
-		},
-		{
-			name: "Test3 - no zero",
-			q:    &queue{eles: []any{1, 2, 3, 4, "A", "B", "C"}},
-			want: []any{1, 2, 3, 4, "A", "B", "C"},
-		},
-		{
-			name: "Test4 - empty list",
-			q:    &queue{eles: []any{}},
-			want: []any{},
+			name:    "Test2 - queue",
+			dstruct: queue{},
+			input:   test2,
+			want:    "3 7 &[]",
 		},
 	}
 
 	for _, tt := range tests {
-		rotateLeftTillZero(tt.q)
-		if diff := cmp.Diff(tt.want, tt.q.elements()); diff != "" {
+		got := tt.dstruct.evaluate(strings.NewReader(tt.input))
+		if diff := cmp.Diff(tt.want, got); diff != "" {
 			t.Fatalf("test %v failed want-/got+ %v", tt.name, diff)
 		}
 	}
+
 }
 
-func generateRandomQueue(size int) *queue {
-	rand.New(rand.NewSource(time.Now().UnixNano()))
-	zeroLoc := rand.Intn(size)
-	q := &queue{}
-	for i := 1; i < size; i++ {
-		if i == zeroLoc {
-			q.push(0)
-			continue
-		}
-		q.push(i)
+func Test_rotateLeftTillZero(t *testing.T) {
+	tests := []struct {
+		name string
+		q    queue
+		want queue
+	}{
+		{
+			name: "Test1 - zero at end",
+			q:    queue{1, 2, 3, 4, "A", "B", "C", 0},
+			want: queue{0, 1, 2, 3, 4, "A", "B", "C"},
+		},
+		{
+			name: "Test2 - zero at beginning",
+			q:    queue{0, 1, 2, 3, 4, "A", "B", "C"},
+			want: queue{0, 1, 2, 3, 4, "A", "B", "C"},
+		},
+		{
+			name: "Test2 - zero in middle",
+			q:    queue{1, 2, 3, 4, 0, "A", "B", "C"},
+			want: queue{0, "A", "B", "C", 1, 2, 3, 4},
+		},
+		{
+			name: "Test3 - no zero",
+			q:    queue{1, 2, 3, 4, "A", "B", "C"},
+			want: queue{1, 2, 3, 4, "A", "B", "C"},
+		},
+		{
+			name: "Test4 - empty list",
+			q:    queue{},
+			want: queue{},
+		},
 	}
-	return q
+
+	for _, tt := range tests {
+		rotateLeftTillZero(&tt.q)
+		if diff := cmp.Diff(tt.want, tt.q); diff != "" {
+			t.Fatalf("test %v failed want-/got+ %v", tt.name, diff)
+		}
+	}
 }
 
 func benchmarkRotateZero(q *queue, b *testing.B) {
@@ -70,17 +86,17 @@ func benchmarkRotateZero(q *queue, b *testing.B) {
 }
 
 // 46275768	        22.84 ns/op	       0 B/op	       0 allocs/op
-func Benchmark_rotateLeftTillZero10(b *testing.B) { benchmarkRotateZero(generateRandomQueue(10), b) }
+func Benchmark_rotateLeftTillZero10(b *testing.B) { benchmarkRotateZero(GenerateRandomQueue(10), b) }
 
 // 43963417	        23.59 ns/op	       0 B/op	       0 allocs/op
-func Benchmark_rotateLeftTillZero100(b *testing.B) { benchmarkRotateZero(generateRandomQueue(100), b) }
+func Benchmark_rotateLeftTillZero100(b *testing.B) { benchmarkRotateZero(GenerateRandomQueue(100), b) }
 
 // 53593687	        21.45 ns/op	       0 B/op	       0 allocs/op
 func Benchmark_rotateLeftTillZero1000(b *testing.B) {
-	benchmarkRotateZero(generateRandomQueue(1000), b)
+	benchmarkRotateZero(GenerateRandomQueue(1000), b)
 }
 
 // 53095393	        20.95 ns/op	       0 B/op	       0 allocs/op
 func Benchmark_rotateLeftTillZero10000(b *testing.B) {
-	benchmarkRotateZero(generateRandomQueue(10000), b)
+	benchmarkRotateZero(GenerateRandomQueue(10000), b)
 }
