@@ -34,6 +34,11 @@ func Test_rotateLeftTillZero(t *testing.T) {
 			q:    &queue{eles: []any{1, 2, 3, 4, "A", "B", "C"}},
 			want: []any{1, 2, 3, 4, "A", "B", "C"},
 		},
+		{
+			name: "Test4 - empty list",
+			q:    &queue{eles: []any{}},
+			want: []any{},
+		},
 	}
 
 	for _, tt := range tests {

@@ -4,6 +4,7 @@ import (
 	"io"
 )
 
+// TODO deque
 type queue struct {
 	eles []any
 }
